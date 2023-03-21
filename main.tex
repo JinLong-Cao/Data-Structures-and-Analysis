@@ -1,0 +1,289 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{amssymb} 
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{todonotes}
+\usepackage[margin=2.5cm]{geometry}
+
+\title{CSC263 Problem Set 1}
+\author{Ethelia Choi, Jin Long Cao}
+\date{October 11, 2022}
+
+\begin{document}
+
+\maketitle
+
+\section*{Question 1}
+\subsubsection*{Author: Ethelia, Proofreader: Jin Long}
+% https://docs.google.com/spreadsheets/d/1e2zPnCtSVkbgprG1ws0urET2PbZ9V-sNmr64rcWVzIQ/edit?usp=sharing
+\subsubsection*{(a)} 
+% The possible combination that results $R_3=4$ is when
+% \begin{enumerate}
+%     \item two arbitrary dices are 8 and 4 then the last die $d \in \{4,5,6,7,8\}$
+%     \item two arbitrary dices are 7 and 3 then the last die $d \in \{3,4,5,6,7\}$
+%     \item two arbitrary dices are 6 and 2 then the last die $d \in \{2,3,4,5,6\}$
+%     \item two arbitrary dices are 5 and 1 then the last die $d \in \{1,2,3,4,5\}$
+% \end{enumerate}
+% with the two arbitrary dice possible being $d_1d_2, d_2d_1, d_2d_3, d_3d_2, d_3d_1,d_1d_3$.\\
+% As a demonstration for the fourth possibility, 
+% \begin{center}
+% \begin{tabular}{||c c c c||} 
+%  \hline
+%  $d_1$ & $d_2$ & $d_3$ &\\ [0.5ex] 
+%  \hline\hline
+%  1 & 5 & $x$ & $x \in \{1,2,3,4,5\}$ \\ 
+%  \hline
+%  1 & $x$ & 5 & repeated rolls: $(d_1,d_2,d_3) = (1,5,5)$ \\
+%  \hline
+%  $x$ & 1 & 5 & repeated rolls: $(1,1,5)$ \\
+%  \hline
+%  5 & 1 & $x$ & repeated rolls: $(5,1,5)$ \\
+%  \hline 
+%  5 & $x$ & 1 & repeated rolls: $(5,1,1)$ \\
+%  \hline
+%  $x$ & 5 & 1 & repeated rolls: $(5,5,1)$ and $(1,5,1)$\\
+%  \hline
+% \end{tabular}
+% \end{center}
+% The repeated rolls are to make sure we don't double count (i.e. $(d_1,d_2,d_3) = (1,5,5)$ is already counted once in the first row, so we don't count it again in the second row). So we have 6 position the dices can be at ($d_1d_2, d_2d_1, d_2d_3, d_3d_2, d_3d_1,d_1d_3$), 4 ways to subtract two dice to make 4, and $5-1=4$ possible values the last die can take (without repeated values). 
+
+
+We claim that $$P(R_3=4)=\frac{4(6\times 3+ 3\times 2)}{8^3}=\frac{96}{512}=18.75$$
+First of all, we have 4 because there are 4 possible pairs of numbers such that $R_3=4$. Namely, $(1, 5), (2, 6), (3, 7), (4, 8)$. Then, for a fixed pair, for example, $(2, 6)$, suppose the first die is 2 and the second die is 6. We are left with two cases for the third die. 
+\begin{itemize}
+    \item Case 1: The third die is not 2 nor 6.\\
+    Then the value of the third die has to be a number between 2 and 6, that is one of $\{3, 4, 5\}$. This is because if the third die is a number bigger than 6 or smaller than 2, $R_3 > 4$. So there are 3 choices for the third die. There are 6 permutations of these 3 distinct numbers. For example, if the third die is 3, the permutations are $(2, 3, 4), (2, 4, 3), (3, 2, 4), (3, 4, 2), (4, 2, 3), (4, 3, 2)$. Thus, this gives us $6\times 3$.
+    \item Case 2: The third die is 2 or 6.\\
+    So there are 2 choices for the third die. This time, we will only have 3 permutations because two of the three elements are the same. We can also think of this as double counting where we divide the 6 permutations by 2, which also gives us 3. For example, suppose the third die is 2, then $(2, 2, 6), (2, 6, 2), (6, 2, 2)$.  Thus, we arrive at $3\times 2$.
+\end{itemize}
+One of these 2 cases must happen so we add these two, which is $6\times 3+3\times 2$. Then, we have 4 pairs, so we multiply and get $4(6\times 3+3\times 2)$. Then the total probability is $8^3$ because there are 3 dice and each die can take 8 different numbers. We divide the product by the total probability because that tells us of all 512 different possible combinations we can get rolling 3 dices, 96 of those will satisfy the requirement $R_3=4$. 
+
+
+% 8-4	but not if third dice is 1,2,3
+% 7-3	but not if third dice is 1,2,8
+% 6-2	but not if third dice is 1,7,8
+% 5-1	but not if third dice is 6,7,8
+% d_1   d_2     d_3 \\
+% 1     5       x   $x \in \{1,2,3,4,5\}$ \\
+% 1     x       5   Repeats 155\\
+% x     1       5   Repeats 115\\
+% 5	    1	    x   Repeats 515\\
+% x 	5      	1   Repeats 151\\
+% 5	    x   	1   Repeats 551, 511\\
+\subsubsection*{(b)} 
+% Expectation of maximum:
+% https://www.quora.com/How-do-you-find-the-expected-value-of-the-maximum-of-n-discrete-i-i-d-random-variables
+
+We propose that $$E[R_3]=\sum_{i=0}^7 i\times \frac{(8-i)(6\times (i-1)+3\times 2)}{8^3}$$ Substituting $i=0,1,\dots, 7$ and calculating the sum, we have that $E[R_3] = 3.9375$. 
+In the sum, $i$ is just the value of $R_3$ while the fraction represents $P(R_3)=i$. \\~\\
+Now we look into the fraction. We have $(8-i)$ because there are $(8-i)$ ways of subtracting two dice to make $i$. We arrived at this by substituting different $k$ for $R_3=k$ and found a pattern. That is, 
+\begin{itemize}
+    \item Let $k=0$, then this means both dice have to roll the same element. Since there are 8 distinct numbers, there are 8 possible pairs.
+    \item Let $k=1$, then the combinations are $(1,2), (2,3), \dots, (7,8)$. There are 7 possible pairs. 
+    \item Let $k=2$, then the combinations are $(1,3), (2,4), \dots, (6,8)$. There are 6 possible pairs. 
+    \item \dots
+    \item Let $k=7$, then the only combination is $(1, 8)$. There is only 1 possible pair.
+\end{itemize}
+Then, for a fixed pair $(a, b)$, suppose for the first dice, we rolled $a$, and for the second dice, we rolled $b$. This leaves us with the third dice. Suppose for the third dice we rolled $c$. There are two different scenarios that can happen:
+\begin{itemize}
+    \item Case 1: $c\neq a$ and $c\neq b$. \\ 
+    Notice that $c$ has to be a number between $a$ and $b$, otherwise, $R_3$ will be greater than the value it should be. This gives us $i-1$ choices for $c$. Next, there are 6 permutations to order these 3 distinct elements: $(a, b, c), (a, c, b), (b, a, c), (b, c, a), (c, a, b), (c, b, a)$. So this gives us $6\times (i-1)$. 
+    \item Case 2: $c=a$ or $c=b$.\\
+    There are 2 choices for $c$. Then notice that since one element is repeated, we need to account for double counting by dividing the number of permutations, 6, by 2. (Double counting means $(a, b, c) = (a, c, b)$ if $b=c$.) Thus, there are 3 permutations for this case. This gives us $3\times 2$.
+\end{itemize}
+Now we put everything together. Since for every fixed pair, one of the two cases can happen, we add the two possibilities, which is $6\times (i-1)+3\times 2$. 
+Next, since we have $(8-i)$ different pairs, we multiply $6\times (i-1)+3\times 2$ by $(8-i)$. This gives us $(8-i)(6\times (i-1)+3\times 2)$, which is what we have in the numerator. Lastly, we divide the product by $8^3$ because we have 3 dice and each can take 8 different values. 
+
+
+\subsubsection*{(c)}
+First of all, notice that 
+\begin{align*}
+    \lim_{n\to\infty} (E[R_n])&=\lim_{n\to\infty}\bigg(\sum_{i=0}^7 i\cdot P(R_n=i)\bigg)\\
+    &=\sum_{i=0}^7 \bigg(\lim_{n\to\infty} i\cdot P(R_n=i)\bigg)\\
+    &=\sum_{i=0}^7 i\cdot \bigg(\lim_{n\to\infty} P(R_n=i)\bigg)\tag{since $i$ is a constant to the limit}\\
+    &= 0\cdot \bigg(\lim_{n\to\infty} P(R_n=0)\bigg)+1\cdot\bigg(\lim_{n\to\infty} P(R_n=1)\bigg) +\dots+7\cdot \bigg(\lim_{n\to\infty} P(R_n=7)\bigg)
+\end{align*}
+Now we will look into each $P(R_n=k)$ for all $k$ from 0 to 7 when $n$ approaches infinity. Here, it is important to note that each number of each die has an equal probability of coming up. \\~\\
+\underline{How can we have $R_n=0$ when $n$ is large?}\\
+This means 2 of our $n$ rolls need to be identical. Since we have 8 distinct numbers, when we roll $n$ dices, it is highly likely that we will have at least 2 rolls that give the same number. In fact, if we think about it, the probability of this happening is close to 1. However, if $R_n=0$, this means the remaining $n-2$ dice rolls will also have to land on the same number. Or else, if at least one dice roll is one of the other 7 numbers, then the max difference, $R_n$ will be greater than 0. In other words, once we rolled the first die, for the remaining $n-1$ dice rolls, we need to avoid 7 numbers. We can see that the probability of this happening is close to 0 when $n$ is large, i.e. $\lim_{n\to\infty} P(R_n=0)=0$.\\~\\
+\underline{How can we have $R_n=1$ when $n$ is large?}\\
+We need 2 rolls to be one of the following 7 pairs: $(1,2), (2,3),\dots, (7,8)$. Suppose for dice $i$ we rolled 1 and for dice $j$ we rolled 2, where $i, j\in [1, n]$. Then, the other $n-2$ dice rolls will have to be either 1 or 2. Otherwise, if we rolled any other number from 3 to 7, $R_n$ will be greater than 1. Notice that if we picked a different pair for dice $i$ and $j$, the same issue will arise. So in other words, after we have fixed two distinct numbers that has a difference of 1, for every roll we make onwards, we need to avoid 6 numbers. Again, this is nearly impossible when $n$ is large. Thus, $\lim_{n\to\infty} P(R_n=1)=0$.\\~\\
+ Now, we will look at when $k=6$. \\~\\
+\underline{How can we have $R_n=6$ when $n$ is large?} \\
+We need 2 rolls to be one of the following 2 pairs: $(1,7), (2,8)$. Suppose of all $n$ dice, we rolled at least one 1 and one 7. We can see the probability of this happening is extremely high because $n$ is large. Then, for the max difference to be 6, for the remaining $n-2$ rolls, we cannot roll an 8. Similarly, if our pair was $(2, 8)$, we will have to avoid rolling 1. In other words, we have to avoid one number. However, since $n$ is arbitrarily large, the chances of never rolling one number is extremely small. Thus, $\lim_{n\to\infty} P(R_n=6)=0$. \\~\\
+Therefore, we can generalize the above cases and see that when we want $R_n=k$, for every $n-2$ dice roll, we will need to avoid rolling $(7-k)$ numbers. So we can repeat this analysis for $k = 3, 4, 5$ and we will arrive at the same result, that $\lim_{n\to\infty} P(R_n=k)=0$ for all $k\in [0, 6]$.\\~\\
+\underline{How can we have $R_n=7$ when $n$ is large?}\\
+Using our observation, we know that we need to avoid $(7-7)=0$ numbers. We will see in a bit whether this is true. Since we roll so many dices, it is guaranteed that we will roll at least one 1 and one 8. Notice that this is the only pair that gives a difference of 7. Then it does not matter what we roll for the remaining $n-2$ dices, $R_n$ will be equal to 7. So indeed, we need to avoid 0 numbers. Since there are no restrictions, $\lim_{n\to\infty}P(R_n=7)=1$. 
+\\~\\
+Therefore, 
+\begin{align*}
+    \lim_{n\to\infty} (E[R_n])&=0\cdot \bigg(\lim_{n\to\infty} P(R_n=0)\bigg)+1\cdot\bigg(\lim_{n\to\infty} P(R_n=1)\bigg) +\dots+7\cdot \bigg(\lim_{n\to\infty} P(R_n=7)\bigg)\\
+    &= 0\cdot 0+1\cdot 0+ \dots+6\cdot 0+7\cdot 1\\
+    &= 7
+\end{align*}
+
+\newpage
+\section*{Question 2}
+\subsubsection*{Author: Jin Long, Proofreader: Ethelia}
+To decide whether it is possible to set the  remaining 510 array elements and still maintain max-heap order. We have to figure out if there are enough ancestors and descendants such that the max-heap order holds. 
+% [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] 
+% heap size 10
+
+%       10
+%    9          8
+% 7 6          5  4
+% 1 2 3
+
+%       10
+%    9          3
+% 8 7          2  1
+% 6 5 4
+% Q([10,9,3,8,7,2,1,6,5,4,?,?,?], 10)
+\subsection*{(a)}
+Our first proposal is to set $A[63] = 507$.\\
+We need to figure out if there are enough elements with higher priority to fill up all the ancestors. \\
+Always want the parent to have a greater value than the children. \\
+We know A[1] = 511 and $A[1] \geq A[3] \geq A[7] \geq A[15] \geq A[31] \geq A[63] = 507$.\\
+We need 5 elements with greater priority than 507 to fill up the 5 ancestor positions, but we know there only exist 4 numbers bigger than 507, namely, 511, 510, 509, and 508. \\
+Hence it is not possible to set the remaining 510 array elements using distinct values
+from the remaining 510 integers and still maintain max-heap order.
+
+\subsection*{(b)}
+Our second proposal is to set $A[63] = 15$.\\
+We already know A[1] = 511 and $A[1] \geq A[3] \geq A[7] \geq A[15] \geq A[31] \geq A[63] = 15$.\\
+Clearly, there are enough elements with higher priority to fill up all the ancestors. \\
+Now we need to figure out if there are enough elements with lower priority to fill up all the descendants.\\
+The descendants of $A[63] = 15$ are \\
+$A[126], A[127], A[252], A[253], A[254], A[255], A[504], A[505], A[506], A[507], A[508], A[509], A[510], \text{ and } A[511]$\\
+Hence, we need 14 elements with a lower priority than $A[63]$, which is 15. Since we have exactly 14 elements with such property, it is possible to set the remaining 510 array elements and still maintain the max-heap order.
+
+   %               63
+   %         126         127
+   %      252  253     254  255
+   % 504 505 506 507 508 509 510 511
+
+\subsection*{(c)}
+Our third proposal is to set $A[63] = 14$.\\
+Since we know there are 14 descendant positions and only 13 elements with a lower priority to $A[63]$. It is not possible to set the remaining 510 array elements and still maintain max-heap order.
+% 1+2+4+...+256=511 (Therefore complete binary tree)
+
+\newpage
+\section*{Question 3}
+\subsubsection*{Author: Ethelia, Proofreader: Jin Long}
+% The goal is to build a combined MinHeap and MaxHeap for a collection of items with priorities. 
+When we consider the process of extracting the max element from a MinHeapArray, recall that in a MinHeapArray, the two pieces of information we know are that a) the min element is at the root, and b) every parent has a value smaller than its children. In other words, we do not know where the max element is. Our best bet would be to loop over every element in the array and compare, which will obviously take a long time. \\~\\
+Suppose we found the max element in the MinHeapArray, we need to swap it with the last element in the array, decrement the heapsize by 1 and bubble up until Min-heap-order is restored. This will take $O(\lg n)$. However, the entire function ExtractMax should only take $O(\lg n)$. Thus, in order to preserve the time complexity, we will need a way to quickly find the max element, in $O(1)$. To do this, our approach is to alter the way we insert an element into a MinHeapArray. (The same issue will arise when we want to extract the min element from a MaxHeapArray. So we will also need to change the way we insert into a MaxHeapArray). 
+
+
+\subsubsection*{InsertMax, InsertMin}
+% Insert the desired element at index heap-size + 1, increase the heap-size by 1, and swap with parent until max-heap order restored (bubble up). Which is the way it has been explained in class and has a worst-case runtime of $O(\lg n)$. 
+
+When we insert an element into a MaxHeapArray, we will make the element have a satellite value that stores a pointer. This pointer will tell us where this element is in the MinHeapArray, since we will insert it into the MinHeapArray as well. The operation of InsertMax basically works the same as explained in class: we will add the element (with its priority and pointer value) at index heap-size + 1, increment heap-size by 1, and then swap with parents until the max-heap order is restored (heapify). The only difference is that the element holds more information now. Adding the pointer will take $O(1)$. Since we can access the heap-size through the satellite value Q.heap-size, adding the element and incrementing heap size will take $O(1)$. At last, heapify takes $O(\lg n)$. Altogether, InsertMax has a worst-case runtime of $O(\lg n)$. \\~\\
+We also insert the same element into the MinHeapArray. This element will have a satellite value that stores the pointer that points to its location in the MaxHeapArray. The rest of inserting works like the opposite of InsertMax: We add the element (with it's priority and pointer value) at index heapsize + 1, increment heapsize by 1, and then swap with parents until min-heap order restored (heapify). Since it's similar to inserting in Max-heap, the worst-case runtime is $O(\lg n)$. \\~\\
+Now notice that for an arbitrary element in the MaxHeapArray, we can access its location in the MinHeapArray in $O(1)$. Same for an arbitrary element in the MinHeapArray. If we picture this, we have a Max heap and a Min heap side-by-side, then suppose we have an element $a$. Then we will have two $a$'s, one in each heap, and they will point at each other. 
+
+% Similarly, if we want to ExtractMin(MinHeapArray), we return and removes an object with minimum priority from MinHeap. Which has a worst-case runtime of $O(\lg n)$. We would also extract the same element in the Max-Heap. Using the pointer of the element...
+
+\subsubsection*{ExtractMax}
+\underline{on MaxHeapArray}\\
+\noindent
+When we want to ExtractMax on a MaxHeapArray, we return and remove an object with maximum priority from MaxHeapArray. This is done by swapping the first element, Q[1], in the array with the last element of the array, Q[heap-size], decreasing heap-size by 1, and bubble down (heapify). Which is the same way it has been explain in class and has a worst-case runtime of $O(\lg n)$. 
+
+\bigskip\noindent
+\underline{on MinHeapArray}\\
+We would also want to extract the same element in the MinHeapArray. Since we have a pointer to the element, finding the same element in Min-Heap will cost $O(1)$. Once the element is found, we swap it with the last element of the array, decrease heap size, and heapify. Note that since we have a new satellite value, the pointer, when we relocate the last element, we will need to update the pointer of the same element in the MaxHeapArray. \\~\\
+Swapping elements will take $O(1)$ since it is just indexing. Decreasing heap-size will also take $O(1)$ because we can access heap-size through the satellite value, Q.heap-size. Heapify will take $O(\lg n)$. Updating the pointer takes $O(1)$ because we will know its index after heapifying and accessing the pointer will take constant time. Altogether, running ExtractMax on a MinHeapArray will have a worst-case runtime of $O(\lg n)$. 
+
+\subsubsection*{ExtractMin}
+\underline{on MinHeapArray}\\
+\noindent
+We will assume it works the same as ExtractMax on a MaxHeapArray except that we have $\leq $ instead of $\geq$ in the relationship between a parent and its children. Since the operation is basically the same, we can also assume it has the same worst-case runtime as ExtractMax on a MaxHeapArray, which is $O(\lg n)$.
+
+% \bigskip\noindent
+% The worst-case runtime will be $O(\lg n)$. This is because it takes 1 step to remove the minimal element, which is at the root. Then, when we bubble up, at most we will have to do this for every level of the tree. So this will take O of the height of the tree, which is $\lg n$.
+
+\bigskip\noindent
+\underline{on MaxHeapArray}\\
+Now we want to extract the min element from a MaxHeapArray. Since when we insert an element, we created pointers, we can use them to find out exactly where the min element is in the MaxHeapArray. So finding the element only takes $O(1)$. Then, we will swap it with the last element of the array, decrease heap-size by 1, and bubble down accordingly (heapify). Similarly, after we relocate the last element, we will need to update the value of the same element in the MinHeapArray. \\~\\
+This operation is the opposite of what we did in ExtractMax on a MinHeapArray. Thus, the runtime will be the same. Altogether, ExtractMin on a MaxHeapArray will have a worse-case runtime of $O(\lg n)$.  
+
+\newpage
+\section*{Question 4}
+\subsubsection*{Author: Jin Long, Proofreader: Ethelia}
+\subsection*{TREE-INSERT(root, x):}
+\begin{enumerate}[itemsep=0pt,parsep=0pt]
+    \item if root is NIL:  \quad\# x.key not already in S
+    \item \qquad \# Found insertion point: create new node with empty children.
+    \item \qquad root = TreeNode(x)
+    \item \qquad root.count = 1
+    \item elif x.key $<$ root.item.key:
+    \item \qquad if TREE-SEARCH(root.left, x.key) is NIL: \quad\# NIL if x does not exist in the subtree.
+    \item \qquad \qquad root.left.count += 1
+    \item \qquad root.left = TREE-INSERT(root.left, x)
+    \item elif x.key $>$ root.item.key:
+    \item \qquad if TREE-SEARCH(root.right, x.key) is NIL: \quad\# NIL if x does not exist in the subtree.
+    \item \qquad \qquad root.right.count += 1
+    \item \qquad root.right = TREE-INSERT(root.right, x)
+    \item else:  \quad\# x.key == root.item.key
+    \item \qquad root.item = x  \quad\# just replace root's item with x
+    \item return root
+\end{enumerate}
+Before inserting, assume count for all nodes are already maintain.\\~\\
+\underline{Case 1:} Some element y in the tree has y.key = x.key, then we replace y with x and r.count does not change for any node. TREE-SEARCH will return y (which means it will not return NIL), therefore none of the counts (for any node) will increase (line 7 and 11). The function will recursively run (line 8 or 12) until it reaches to the y element then line 14 will run, replacing y with x.\\~\\
+\underline{Case 2:} The element we're inserting does not exist in the tree already and is added as a leaf (line 1 to 4). All the ancestor of that leaf has their count increased by 1. TREE-SEARCH will return NIL, therefore anytime it recursively TREE-INSERT (line 8 or 12), it will increase the count by one for the parent node (line 7 and 11). Once it found it's insertion point, it will create a node and set that node's count to 1. \\~\\
+In both cases, the TREE-SEARCH runtime will $O(\lg n)$ and the asymptotic worst-case runtime for this TREE-INSERT is $O(\lg n + \lg n) = O(2\cdot\lg n) = O(\lg n)$, which is the same as the versions given in lecture.
+
+
+\newpage
+\begin{enumerate}[itemsep=0pt,parsep=0pt]
+\subsection*{TREE-DELETE(root, x):}
+    \item if root is NIL:  \# x.key not in S $--$ should not happen!
+    \item \qquad pass  \# nothing to remove
+    \item elif x.key $<$ root.item.key:
+    \item \qquad if TREE-SEARCH(root.left, x.key) is not NIL: \quad\# NIL if x does not exist in the subtree.
+    \item \qquad \qquad root.count -= 1
+    \item \qquad root.left = TREE-DELETE(root.left, x)
+    \item elif x.key $>$ root.item.key:
+    \item \qquad if TREE-SEARCH(root.right, x.key) is not NIL: \quad\# NIL if x does not exist in the subtree.
+    \item \qquad \qquad root.count -= 1
+    \item \qquad root.right = TREE-DELETE(root.right, x)
+    \item else:  \# x.key == root.item.key
+    \item \qquad \# Remove root.item.
+    \item \qquad if root.left is NIL:
+    \item \qquad \qquad \# Missing left child (at least): replace with right child.
+    \item \qquad \qquad \# descendants nodes' count don't change
+    \item \qquad \qquad root.count = root.right.count
+    \item \qquad \qquad root = root.right  \# NIL if both children missing
+    \item \qquad elif root.right is NIL:
+    \item \qquad \qquad \# Missing right child: replace with left child.
+    \item \qquad \qquad \# descendants nodes' count don't change
+    \item \qquad \qquad root.count = root.left.count
+    \item \qquad \qquad root = root.left
+    \item \qquad else:
+    \item \qquad \qquad \# Root has two children: remove element with smallest key in
+    \item \qquad \qquad \# right subtree and move it to root (replace root with successor).
+    \item \qquad \qquad root.count = root.left.count + root.right.count
+    \item \qquad \qquad root.item, root.right = TREE-DELETE-MIN(root.right)
+    \item return root
+\subsection*{TREE-DELETE-MIN(root):}
+    \item \# Remove element with smallest key in root's subtree; return item and
+    \item \# root of resulting subtree.
+    \item if root.left is NIL:
+    \item \qquad \# Root stores item with smallest key; replace it with right child. 
+    \item \qquad return root.item, root.right
+    \item else:
+    \item \qquad \# Left subtree not empty: root not the smallest.
+    \item \qquad root.count -= 1
+    \item \qquad item, root.left = TREE-DELETE-MIN(root.left)
+    \item \qquad return item, root
+\end{enumerate}
+\underline{Case 1:} TREE-DELETE is deleting an element that doesn't exist in the tree. This case should not happen (as stated in the pseudo-code) but should still be taken care of. Since the element does not exist in the tree, TREE-SEARCH will return NIL. If the element does not exist, it will recursively run (line 6 or 10) until "root is NIL" (line 1) and just pass. None of the counts (for any node) will change due to the fact that TREE-SEARCH is NIL (line 4 or 8).\\~\\
+\underline{Case 2:} TREE-DELETE is deleting an element that does exist in the tree. TREE-SEARCH will not return NIL. Every ancestor of the element getting deleted will decrement their count by 1 and any descendants will keep the same count. The code will recursively run (line 6 or 10) and decrement the count for each ancestor (line 5 or 9) until it finds the element (line 11). Once the element is found, we replace it with one of their children (and their count) if the other one is NIL. If both children exist, we set the current node count to the sum of both children and find the successor to replace to it. Since the successor is replacing it, all ancestors of the successor node that is also a descendant of the deleted node will decrement their count (line 36).\\~\\
+In both cases, the TREE-SEARCH runtime will $O(\lg n)$ and the asymptotic worst-case runtime for this TREE-DELETE is $O(\lg n+\lg n) = O(2\cdot\lg n) = O(\lg n)$, which is the same as the versions given in lecture.
+
+
+\end{document}
